@@ -1,22 +1,42 @@
 import json
-import requests  # Assurez-vous d'importer le module 'requests'
+import requests
+from pathlib import Path
 
-total_datasets = []
-page = 0  # Assurez-vous de définir une valeur initiale pour la variable 'page'
+output_data_path = Path("data/raw")
+output_data_path.mkdir(parents=True, exist_ok=True)
 
-while True:  # Changez 'data' à 'True' pour un contrôle continu
-    r = requests.get(f"https://entrepot.recherche.data.gouv.fr/api/v1/search?q=*&start={page}&per_page=100")
-    data_search = r.json()
-    
-    # Vérifiez si 'data' contient la clé 'data' et si la liste 'items' est non vide
-    if 'data' in data_search and 'items' in data_search['data'] and data_search['data']['items']:
-        for item in data_search['data']['items']:
-            total_datasets.append(item)
+output_file = output_data_path / Path("rdg_corpus.json")
 
-        page += 100
-    else:
-        break  # Sortez de la boucle si la liste d'éléments est vide
+if output_file.exists():
+    print(
+        "Le fichier existe déjà, supprimez le si vous souhaiter l'extraire à nouveau."
+    )
+    exit()
 
-with open("data_search.json", 'w') as f:
-    json.dump(total_datasets, f)
+datasets = []
+shift = 0
 
+while True:
+
+    # request page from RDG API
+    r = requests.get(
+        f"https://entrepot.recherche.data.gouv.fr/api/v1/search?q=*&start={shift}&per_page=100"
+    )
+    output = r.json()
+
+    # break the loop if no data is found (i.e no more items to request)
+    if (
+        "data" not in output
+        or "items" not in output["data"]
+        or not output["data"]["items"]
+    ):
+        break
+
+    shift += 100
+
+    for item in output["data"]["items"]:
+        datasets.append(item)
+
+
+with open(output_file, "w") as f:
+    json.dump(datasets, f)
