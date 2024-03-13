@@ -1,4 +1,6 @@
 requests
+nbformat>=4.2.0
 plotly
 seaborn
 pandas
+nltk
