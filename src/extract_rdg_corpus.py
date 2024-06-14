@@ -18,6 +18,12 @@ shift = 0
 
 while True:
 
+    if shift % 1000 == 0:
+        print(f"Extracting {shift}th item")
+        # save checkpoint
+        with open(output_file, "w") as f:
+            json.dump(datasets, f, indent=4)
+
     # request page from RDG API
     r = requests.get(
         f"https://entrepot.recherche.data.gouv.fr/api/v1/search?q=*&start={shift}&per_page=100"
@@ -39,4 +45,4 @@ while True:
 
 
 with open(output_file, "w") as f:
-    json.dump(datasets, f)
+    json.dump(datasets, f, indent=4)
