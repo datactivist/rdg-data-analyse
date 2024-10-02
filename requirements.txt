@@ -4,3 +4,4 @@ plotly
 seaborn
 pandas
 nltk
+scikit-learn
