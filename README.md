@@ -9,14 +9,14 @@
 Créer un environnement virtuel :
 
 ```bash
-python -m venv env
+python -m venv venv
 ```
 
 Activer l'environnement virtuel :
 
 ```bash
-source env/bin/activate # Linux
-env\Scripts\activate # Windows
+source venv/bin/activate # Linux
+venv\Scripts\activate # Windows
 ```
 
 Installer les dépendances avec pip :
