@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 from pathlib import Path
+import csv
 
 dataverse_type = [
     "Research Project",
@@ -13,6 +14,7 @@ dataverse_type = [
     "Teaching Course",
 ]
 
+csv_espaces = Path("espaces_institutionnels_identifiers.csv")
 
 def extract_identifier_from_href(href):
 
@@ -21,6 +23,8 @@ def extract_identifier_from_href(href):
 
     return href.split("/")[-1]
 
+dataverse_type_csv = Path("data/interim/dataverse_type.csv")
+csv_data = []
 
 for d_type in dataverse_type:
 
@@ -46,19 +50,27 @@ for d_type in dataverse_type:
             if response.status_code != 200:
                 print(f"Failed to fetch {url}")
                 continue
-
+            print(response)
             html_text = response.text
             html = BeautifulSoup(html_text, "html.parser")
 
         table = html.find("table", {"id": "resultsTable"})
+        if table:
+            print("Tableau trouvé")
+        else:
+            print("Aucun tableau trouvé")  
+            break
         tds = table.find_all("td")
 
+        
         identifiers = []
         for td in tds:
             title = td.find("div", {"class": "card-title-icon-block"})
             href = title.find("a")["href"]
             identifier = extract_identifier_from_href(href)
             identifiers.append(identifier)
+
+            csv_data.append({"type" : d_type , "identifier" : identifier })
 
         with open(
             f"data/interim/html/{d_type}_{page}.html", "w", encoding="utf-8"
@@ -73,3 +85,14 @@ for d_type in dataverse_type:
 # TODO
 # Sauvegarder dans un fichier data/interim/dataverse_type.csv
 # Utiliser le fichier data/interim/dataverse_type.csv pour ajouter les types de dataverses dans rdg_corpus.json (en le renommant rdg_corpus_extended.json)
+
+
+with open(dataverse_type_csv, "w", encoding="utf-8", newline='') as file:
+    fieldnames = [ "type" , "identifier"]
+    writer = csv.DictWriter(file, fieldnames=fieldnames)
+    writer.writeheader()  # Écrire l'en-tête
+
+    # Écrire chaque ligne de données dans le CSV
+    writer.writerows(csv_data)
+
+print("Fichier CSV créé avec succès")

@@ -15,6 +15,7 @@ if output_file.exists():
 
 datasets = []
 shift = 0
+per_page = 100
 
 while True:
 
@@ -26,7 +27,7 @@ while True:
 
     # request page from RDG API
     r = requests.get(
-        f"https://entrepot.recherche.data.gouv.fr/api/v1/search?q=*&start={shift}&per_page=100"
+        f"https://entrepot.recherche.data.gouv.fr/api/v1/search?q=*&start={shift}&per_page={per_page}"
     )
     output = r.json()
 
@@ -38,7 +39,7 @@ while True:
     ):
         break
 
-    shift += 100
+    shift += per_page
 
     for item in output["data"]["items"]:
         datasets.append(item)
