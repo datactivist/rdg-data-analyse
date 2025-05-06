@@ -2,8 +2,14 @@
 # exact, sans accents, sans majuscules, pluriel, féminin, etc..
 import unicodedata
 
+
+
+
 with open("data/thesaurus/terms_en.txt", "r", encoding="utf-8") as f:
-    candidates = f.read().splitlines()
+    en_candidates = f.read().splitlines()
+
+with open("data/thesaurus/terms_fr.txt", "r", encoding="utf-8") as f:
+    fr_candidates = f.read().splitlines()
 
 
 def normalize_term(term):
@@ -22,7 +28,7 @@ def normalize_term(term):
 
 
 def clean_thesaurus(thesaurus):
-    """
+    """ 
     Cleans a thesaurus by removing duplicates and normalizing the terms.
 
     Args:
@@ -37,9 +43,15 @@ def clean_thesaurus(thesaurus):
 
     return thesaurus
 
+en_cleaned_thesaurus = clean_thesaurus(en_candidates)
 
-cleaned_thesaurus = clean_thesaurus(candidates)
 
 with open("data/thesaurus/cleaned_terms_en.txt", "w", encoding="utf-8") as f:
-    for term in cleaned_thesaurus:
+    for term in en_cleaned_thesaurus:
         f.write(term + "\n")
+
+
+fr_cleaned_thesaurus = clean_thesaurus(fr_candidates)
+with open("data/thesaurus/cleaned_terms_fr.txt", "w", encoding="utf-8") as f:
+    for term in fr_cleaned_thesaurus:
+        f.write(term + "\n")   
