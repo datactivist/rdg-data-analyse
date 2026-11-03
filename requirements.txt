@@ -7,4 +7,5 @@ nltk
 scikit-learn
 beautifulsoup4
 openpyxl
-sentence_transformers
+keybert
+sentence-transformers
